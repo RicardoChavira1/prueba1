@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     return res;
 
   } catch (error: any) {
-    console.error("🔥 ERROR CRÍTICO:", error.message);
+    console.error("🔥 ERROR CRÍTICO: esto va a explotar", error.message);
     return NextResponse.json(
       { error: "Error interno del servidor" },
       { status: 401 }
