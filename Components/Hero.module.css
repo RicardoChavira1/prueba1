@@ -1,0 +1,25 @@
+.hero{
+    background: radial-gradient(1200px 400px at 50% - 20%, rgba(58,134,255,.35),transparent),
+    linear-gradient(180deg, rgba(27, 38m 0.8),rgba(27, 27, 38, 0));
+    padding: 4rem 0;
+    border-bottom: 1px solid(var(--border));    
+}
+.inner{
+    width: min(100% -2rem ,var(--container));
+    margin-inline: auto;
+    text-align: center;
+}
+.cta{
+    display: inline-block;
+    margin-top: 1rem;
+    padding: .75rem 1rem;
+    border-radius: 999px;
+    background: var(--brand-600);
+    color: azure;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+}
+.cta:hover{
+    filter:brightness(1.1);
+}
