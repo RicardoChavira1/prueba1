@@ -86,7 +86,7 @@ export default function LogInPage() {
             }
             
             // Imprimimos los primeros 20 caracteres para verificar que existe
-            console.log("🟢 TOKEN OBTENIDO:", idToken.substring(0, 20) + "...");
+            console.log("🟢 TOKEN OBTENIDO CON EXITO:", idToken.substring(0, 20) + "...");
 
             await createSessionCookie(idToken);
         } catch (error: any) {
