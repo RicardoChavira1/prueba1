@@ -5,7 +5,7 @@ const COOKIE = process.env.SESSION_COOKIE_NAME ?? "__session";
 const MAX_AGE = Number(process.env.SESSION_COOKIE_MAX_AGE ?? 60 * 60 * 8);
 
 export async function POST(req: Request) {
-  console.log("🟢 INICIO DE PETICIÓN A /api/sessionlogin");
+  console.log("🟢 INICIO  insano DE PETICIÓN A /api/sessionlogin");
   
   try {
     const body = await req.json();
