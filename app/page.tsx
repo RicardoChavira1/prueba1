@@ -26,7 +26,7 @@ export default function Home() {
         </div>
 
         <div className="hero-cont">
-          <h1 className="hero-titulo">Un hogar lleno de amor para cada mascota</h1>
+          <h1 className="hero-titulo">Un hogar lleno de amor para cada mascota y toda la familia</h1>
           <p className="hero-descripcion">
             Encuentra información, consejos y todo lo que necesitas para cuidar a tu mejor amigo
           </p>
