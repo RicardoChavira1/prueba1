@@ -161,6 +161,7 @@ export default function Home() {
         <div className="flex justify-center gap-6 mb-2">
           <a href="/contacto" className="hover:underline">Términos</a>
           <a href="/privacidad" className="hover:underline">Privacidad</a>
+          <a href="/privacidad" className="hover:underline">Redes Sociales</a>
         </div>
         <p>© 2025 Wikipets. Todos los derechos reservados.</p>
       </footer>
