@@ -1,56 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import Header from "@/Components/Header"; 
-import Link from "next/link";
 import { auth } from "../../../lib/firebase-client"; 
 import { onAuthStateChanged, User } from "firebase/auth";
-
-// Metodo para guardar 
-type Post = {
-  id: number;
-  autor: string;
-  contenido: string;
-  fecha: string;
-  likes: number;
-  comentarios: number;
-};
-
-// Datos de prueba (Hardcoded)
-const postsIniciales: Post[] = [
-  {
-    id: 1,
-    autor: "Gamaliel Castro",
-    contenido: "¡Hola a todos! Mi perro Max aprendió a dar la pata hoy. Estoy muy orgulloso 🐶.",
-    fecha: "Hace 2 horas",
-    likes: 5,
-    comentarios: 2,
-  },
-  {
-    id: 2,
-    autor: "Gael Garcia",
-    contenido: "¿Alguien sabe qué darle a un gato con dolor de estómago? He probado con arroz pero no quiere comer. Ayuda por favor 🙏",
-    fecha: "Hace 4 horas",
-    likes: 12,
-    comentarios: 8,
-  },
-  {
-    id: 3,
-    autor: "Carlos Ruiz",
-    contenido: "La campaña de adopción de ayer fue un éxito total. Gracias a todos los que asistieron.",
-    fecha: "Ayer",
-    likes: 45,
-    comentarios: 10,
-  }
-];
+import Link from "next/link"; // Asegúrate de tener este import
+// Importamos toggleLike también
+import { addPost, listenToPosts, toggleLike, Post } from "../../../lib/firestore-service";
 
 export default function ForoPage() {
-  const [posts, setPosts] = useState<Post[]>(postsIniciales);
+  const [posts, setPosts] = useState<Post[]>([]); 
   const [nuevoPost, setNuevoPost] = useState("");
-  
-  // --- Estado para el usuario autenticado ---
   const [user, setUser] = useState<User | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // --- Detectar usuario al cargar la página ---
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
         setUser(currentUser);
@@ -58,29 +20,36 @@ export default function ForoPage() {
     return () => unsubscribe();
   }, []);
 
-  const handlePublicar = (e: React.FormEvent) => {
+  useEffect(() => {
+    const unsubscribe = listenToPosts((nuevosPosts) => {
+        setPosts(nuevosPosts);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handlePublicar = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nuevoPost.trim()) return;
+    if (!nuevoPost.trim() || !user) return;
 
-    // --- LÓGICA: Determinar el nombre a mostrar ---
-    // 1. Si hay usuario y tiene nombre (displayName), usamos ese.
-    // 2. Si hay usuario pero no nombre, usamos el email.
-    // 3. Si no hay usuario (caso raro si proteges la ruta), ponemos "Anónimo".
-    const nombreAutor = user 
-        ? (user.displayName || user.email?.split('@')[0] || "Usuario sin nombre") 
-        : "Anónimo";
+    setIsSubmitting(true);
+    const exito = await addPost(nuevoPost, user);
+    if (exito) setNuevoPost("");
+    setIsSubmitting(false);
+  };
 
-    const postTemporal: Post = {
-      id: Date.now(),
-      autor: nombreAutor, 
-      contenido: nuevoPost,
-      fecha: "Ahora mismo",
-      likes: 0,
-      comentarios: 0,
-    };
+  const handleLikeInteraction = async (post: Post) => {
+      if (!user) {
+          alert("Debes iniciar sesión para dar like ❤️");
+          return;
+      }
+      await toggleLike(post.id, user.uid, post.likes);
+  };
 
-    setPosts([postTemporal, ...posts]); 
-    setNuevoPost(""); 
+  const formatearFecha = (timestamp: any) => {
+      if (!timestamp) return "Enviando...";
+      return new Date(timestamp.seconds * 1000).toLocaleDateString("es-ES", {
+          hour: '2-digit', minute: '2-digit'
+      });
   };
 
   return (
@@ -94,12 +63,10 @@ export default function ForoPage() {
           <p className="text-gray-600">Comparte experiencias, dudas y amor por las mascotas.</p>
         </div>
 
-        {/* --- ÁREA DE CREAR PUBLICACIÓN --- */}
         <section className="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-8">
           <form onSubmit={handlePublicar}>
             <div className="flex gap-4">
               <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-2xl overflow-hidden">
-                {/* Si el usuario tiene foto, la mostramos, si no, un icono */}
                 {user?.photoURL ? (
                     <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -113,17 +80,16 @@ export default function ForoPage() {
                   placeholder={user ? `Hola ${user.displayName || 'amigo'}, ¿qué nos cuentas hoy?` : "Inicia sesión para publicar..."}
                   value={nuevoPost}
                   onChange={(e) => setNuevoPost(e.target.value)}
-                  // Deshabilitamos si no hay usuario logueado
-                  disabled={!user}
+                  disabled={!user || isSubmitting}
                 ></textarea>
                 <div className="flex justify-between items-center mt-2">
                   {!user && <span className="text-xs text-red-500 font-semibold">Debes iniciar sesión para postear</span>}
                   <button 
                     type="submit"
                     className="bg-orange-500 text-white font-bold py-2 px-6 rounded-full hover:bg-orange-600 transition duration-150 disabled:opacity-50 ml-auto"
-                    disabled={!nuevoPost.trim() || !user}
+                    disabled={!nuevoPost.trim() || !user || isSubmitting}
                   >
-                    Publicar
+                    {isSubmitting ? "Publicando..." : "Publicar"}
                   </button>
                 </div>
               </div>
@@ -131,43 +97,63 @@ export default function ForoPage() {
           </form>
         </section>
 
-        {/* --- FEED DE PUBLICACIONES --- */}
         <section className="space-y-6">
-          {posts.map((post) => (
-            <article key={post.id} className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
-              
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600 uppercase">
-                  {post.autor.charAt(0)}
+          {posts.map((post) => {
+            const isLiked = user ? post.likes.includes(user.uid) : false;
+
+            return (
+                <article key={post.id} className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                
+                <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600 uppercase overflow-hidden">
+                    {post.autorFoto ? <img src={post.autorFoto} className="w-full h-full object-cover"/> : post.autorNombre.charAt(0)}
+                    </div>
+                    <div>
+                    <h3 className="font-bold text-gray-900">{post.autorNombre}</h3>
+                    <span className="text-xs text-gray-500">{formatearFecha(post.fecha)}</span>
+                    </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-gray-900">{post.autor}</h3>
-                  <span className="text-xs text-gray-500">{post.fecha}</span>
+
+                <p className="text-gray-800 text-lg mb-4 whitespace-pre-wrap leading-relaxed">
+                    {post.contenido}
+                </p>
+
+                <div className="flex items-center gap-6 border-t border-gray-100 pt-3 text-gray-500">
+                    {/* BOTÓN LIKE */}
+                    <button 
+                        onClick={() => handleLikeInteraction(post)}
+                        className={`flex items-center gap-2 transition-colors group ${isLiked ? 'text-red-500' : 'hover:text-red-500'}`}
+                    >
+                        <svg 
+                            className={`w-5 h-5 group-hover:scale-110 transition-transform ${isLiked ? 'fill-current' : 'fill-none'}`} 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        <span className="text-sm font-medium">{post.likes.length}</span>
+                    </button>
+
+                    {/* --- AQUÍ ESTÁ EL CAMBIO: Botón Comentarios ahora es un LINK --- */}
+                    <Link 
+                        href={`/dashboard/foro/${post.id}`} 
+                        className="flex items-center gap-2 hover:text-blue-500 transition-colors group"
+                    >
+                        <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <span className="text-sm font-medium">{post.comentarios} comentarios</span>
+                    </Link>
+                    {/* ---------------------------------------------------------------- */}
                 </div>
-              </div>
 
-              <p className="text-gray-800 text-lg mb-4 whitespace-pre-wrap leading-relaxed">
-                {post.contenido}
-              </p>
-
-              <div className="flex items-center gap-6 border-t border-gray-100 pt-3 text-gray-500">
-                <button className="flex items-center gap-2 hover:text-red-500 transition-colors group">
-                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                  </svg>
-                  <span className="text-sm font-medium">{post.likes}</span>
-                </button>
-
-                <button className="flex items-center gap-2 hover:text-blue-500 transition-colors group">
-                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                  </svg>
-                  <span className="text-sm font-medium">{post.comentarios} comentarios</span>
-                </button>
-              </div>
-
-            </article>
-          ))}
+                </article>
+            );
+          })}
+          
+          {posts.length === 0 && (
+              <p className="text-center text-gray-500 mt-10">Aún no hay publicaciones. ¡Sé el primero!</p>
+          )}
         </section>
 
       </main>
