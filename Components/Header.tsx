@@ -24,10 +24,8 @@ export default function Header() {
         return () => unsubscribe();
     }, []);
 
-    // --- FUNCIÓN DE LOGOUT SIMPLIFICADA ---
     const handleLogout = async () => {
         try {
-            // Solo cerramos sesión en Firebase Client
             await signOut(auth);
             console.log("Sesión cerrada correctamente.");
             
@@ -37,7 +35,6 @@ export default function Header() {
             console.error("Error al cerrar sesión:", error);
         }
     };
-    // -------------------------------------
 
     const renderAuthLinks = () => {
         if (loading) return <div className="h-10 w-48" />;
@@ -113,7 +110,7 @@ export default function Header() {
             >
                 <div className="container mx-auto flex items-center justify-between">
                     <a className="brand flex items-center gap-2" href="/">
-                        <Image src="/logo.png" alt="Logo Wikipets" width={70} height={40} />
+                        <Image src="/logo.png" alt="Logo Wikipets" width={200} height={150} />
                     </a>
                     
                     {/* Menú de Escritorio */}

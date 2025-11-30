@@ -72,7 +72,7 @@ export default function ForoPage() {
 
     const postTemporal: Post = {
       id: Date.now(),
-      autor: nombreAutor, // ¡Aquí usamos el nombre real!
+      autor: nombreAutor, 
       contenido: nuevoPost,
       fecha: "Ahora mismo",
       likes: 0,
@@ -110,7 +110,6 @@ export default function ForoPage() {
                 <textarea
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none bg-gray-50"
                   rows={3}
-                  // Cambiamos el placeholder para que sea más personal
                   placeholder={user ? `Hola ${user.displayName || 'amigo'}, ¿qué nos cuentas hoy?` : "Inicia sesión para publicar..."}
                   value={nuevoPost}
                   onChange={(e) => setNuevoPost(e.target.value)}
