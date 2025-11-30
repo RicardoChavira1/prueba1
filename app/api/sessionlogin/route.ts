@@ -5,7 +5,7 @@ const COOKIE = process.env.SESSION_COOKIE_NAME ?? "__session";
 const MAX_AGE = Number(process.env.SESSION_COOKIE_MAX_AGE ?? 60 * 60 * 8);
 
 export async function POST(req: Request) {
-  console.log("🟢 INICIO  insano DE PETICIÓN A /api/sessionlogin");
+  console.log("🟢 INICIO insano DE PETICIÓN A /api/sessionlogin");
   
   try {
     const body = await req.json();
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     return res;
 
   } catch (error: any) {
-    console.error("🔥 ERROR CRÍTICO: esto va a explotar", error.message);
+    console.error("🔥 ERROR CRÍTICO:", error.message);
     return NextResponse.json(
       { error: "Error interno del servidor" },
       { status: 401 }

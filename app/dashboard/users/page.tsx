@@ -5,7 +5,7 @@ export default function Users() {
     return (
         <>
             {/* HEADER*/}
-            <Header showLoginButton={true} showSingUpButton={true} />
+            <Header />
 
             <ul className="p-4">
                 <li>
