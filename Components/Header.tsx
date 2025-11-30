@@ -24,10 +24,8 @@ export default function Header() {
         return () => unsubscribe();
     }, []);
 
-    // --- FUNCIÓN DE LOGOUT ---
     const handleLogout = async () => {
         try {
-            // 1. Cerrar sesión en Firebase Client (Navegador)
             await signOut(auth);
 
             // 2. Llamar a la API para borrar la cookie de sesión
@@ -43,7 +41,6 @@ export default function Header() {
             console.error("Error al cerrar sesión:", error);
         }
     };
-    // --- FIN FUNCIÓN LOGOUT ---
 
     const renderAuthLinks = () => {
         if (loading) return <div className="h-10 w-48" />;
@@ -118,9 +115,22 @@ export default function Header() {
                 style={{ backgroundColor: '#fdb711' }}
             >
                 <div className="container mx-auto flex items-center justify-between">
-                    <Link href="/" className="brand flex items-center gap-2">
-                        <Image src="/logo.png" alt="Logo Wikipets" width={70} height={40} />
-                    </Link>
+                    <a className="brand flex items-center gap-2" href="/">
+                        <Image src="/logo.png" alt="Logo Wikipets" width={200} height={150} />
+                    </a>
+                    
+                    {/* Menú de Escritorio */}
+                    <ul className="menu2 hidden md:flex flex-1 justify-center gap-8 md:gap-10">
+                        <li><a href="#perros" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Perros</a></li>
+                        <li><a href="#gatos" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Gatos</a></li>
+                        <li><a href="#enfermedades" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Enfermedades</a></li>
+                        
+                        {/* --- Enlace al Foro --- */}
+                        <li>
+                            <Link href="/dashboard/foro" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">
+                                Foro
+                            </Link>
+                        </li>
 
                     {/* NAVIGACIÓN PRINCIPAL (ESCRITORIO) */}
                     <ul className="menu2 hidden md:flex flex-1 justify-center gap-8 md:gap-10">
