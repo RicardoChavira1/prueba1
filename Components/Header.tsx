@@ -24,26 +24,20 @@ export default function Header() {
         return () => unsubscribe();
     }, []);
 
-    // --- FUNCIÓN DE LOGOUT NUEVA ---
+    // --- FUNCIÓN DE LOGOUT SIMPLIFICADA ---
     const handleLogout = async () => {
         try {
-            // 1. Cerrar sesión en Firebase Client (Navegador)
+            // Solo cerramos sesión en Firebase Client
             await signOut(auth);
-
-            // 2. Llamar a la API para borrar la cookie de sesión
-            await fetch("/api/sessionlogout", {
-                method: "POST",
-            });
-
-            console.log("Sesión cerrada y cookie borrada.");
+            console.log("Sesión cerrada correctamente.");
+            
             setUser(null);
-            router.push('/Login'); // Redirigir al login o al home
-            router.refresh(); // Refrescar para asegurar que el middleware detecte el cambio
+            router.push('/Login'); 
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
         }
     };
-    // --- FIN FUNCIÓN LOGOUT ---
+    // -------------------------------------
 
     const renderAuthLinks = () => {
         if (loading) return <div className="h-10 w-48" />;
@@ -121,11 +115,20 @@ export default function Header() {
                     <a className="brand flex items-center gap-2" href="/">
                         <Image src="/logo.png" alt="Logo Wikipets" width={70} height={40} />
                     </a>
+                    
+                    {/* Menú de Escritorio */}
                     <ul className="menu2 hidden md:flex flex-1 justify-center gap-8 md:gap-10">
                         <li><a href="#perros" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Perros</a></li>
                         <li><a href="#gatos" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Gatos</a></li>
                         <li><a href="#enfermedades" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Enfermedades</a></li>
-                        <li><a href="#foro" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Foro</a></li>
+                        
+                        {/* --- Enlace al Foro --- */}
+                        <li>
+                            <Link href="/dashboard/foro" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">
+                                Foro
+                            </Link>
+                        </li>
+
                         <li><a href="#adopciones" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Adopciones</a></li>
                     </ul>
                     
@@ -140,6 +143,8 @@ export default function Header() {
                         {menuOpen ? "✕" : "☰"}
                     </button>
                 </div>
+                
+                {/* Menú Móvil */}
                 <div
                     className={`md:hidden absolute top-full left-0 w-full bg-yellow-100 border-t border-yellow-300 transition-all duration-300 overflow-hidden shadow-md z-40 ${menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                         }`}
@@ -148,7 +153,14 @@ export default function Header() {
                         <li><a href="#perros" className="font-bold text-lg text-gray-800">Perros</a></li>
                         <li><a href="#gatos" className="font-bold text-lg text-gray-800">Gatos</a></li>
                         <li><a href="#enfermedades" className="font-bold text-lg text-gray-800">Enfermedades</a></li>
-                        <li><a href="#foro" className="font-bold text-lg text-gray-800">Foro</a></li>
+                        
+                        {/* --- Enlace al Foro (Móvil) --- */}
+                        <li>
+                            <Link href="/dashboard/foro" className="font-bold text-lg text-gray-800" onClick={() => setMenuOpen(false)}>
+                                Foro
+                            </Link>
+                        </li>
+
                         <li><a href="#adopciones" className="font-bold text-lg text-gray-800">Adopciones</a></li>
                         
                         <li className="flex flex-col items-center gap-2 mt-2 w-full px-4">

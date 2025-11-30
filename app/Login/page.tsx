@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+// Asegúrate de que la ruta de importación sea la correcta para tu estructura
 import Header from "../../Components/Header"; 
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -15,6 +16,7 @@ export default function LogInPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    
     const [error, setError] = useState<string | null>(null);
     const [errorCode, setErrorCode] = useState<number | null>(null); 
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -22,8 +24,6 @@ export default function LogInPage() {
     const router = useRouter();
 
     const createSessionCookie = async (idToken: string) => {
-        console.log("📤 Enviando token a la API..."); // DIAGNÓSTICO
-        
         try {
             const res = await fetch("/api/sessionlogin", {
                 method: "POST",
@@ -35,22 +35,25 @@ export default function LogInPage() {
                 console.log(`✅ Éxito: Cookie creada (Status ${res.status})`);
                 setSuccessMessage(`¡Inicio de sesión correcto! (Código ${res.status})`);
                 
+                // 2. Esperamos 1.5 segundos y redirigimos
                 setTimeout(() => {
-                    router.push('/dashboard/users'); 
+                    // --- CAMBIO AQUÍ: Redirigir a '/' en lugar de '/dashboard/users' ---
+                    router.push('/'); 
                     router.refresh(); 
                 }, 1500);
                 
             } else {
-                // --- FALLO ---
                 await signOut(auth); 
                 const data = await res.json();
                 setErrorCode(res.status);
-                console.error(`❌ Error API: ${res.status} - ${data.error}`);
+
+                console.error(`❌ Error detectado en API: ${res.status}`);
+                console.error(`   Mensaje del servidor: ${data.error}`);
 
                 if (res.status === 400) {
-                    setError("Error 400: El token no llegó al servidor.");
+                    setError("Error 400: Petición incorrecta (Falta Token).");
                 } else if (res.status === 401) {
-                    setError("Error 401: Credenciales rechazadas por el servidor.");
+                    setError("Error 401: No autorizado (Token inválido).");
                 } else {
                     setError(`Error ${res.status}: ${data.error}`);
                 }
@@ -68,29 +71,16 @@ export default function LogInPage() {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setErrorCode(null);
         setSuccessMessage(null);
-
-        console.log("🔵 Intentando Login con Email/Pass..."); // DIAGNÓSTICO
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            console.log("🟢 Usuario autenticado en Firebase:", user.email); // DIAGNÓSTICO
-
-            console.log("🟡 Generando Token ID..."); // DIAGNÓSTICO
             const idToken = await user.getIdToken(true);
-
-            if (!idToken) {
-                console.error("🔴 ERROR: El token generado está vacío o es nulo.");
-                throw new Error("Token vacío");
-            }
-            
-            // Imprimimos los primeros 20 caracteres para verificar que existe
-            console.log("🟢 TOKEN OBTENIDO CON EXITO:", idToken.substring(0, 20) + "...");
-
             await createSessionCookie(idToken);
         } catch (error: any) {
-            console.error("Error Login:", error.message);
+            console.error("Error Firebase:", error.message);
             setError("Correo o contraseña incorrectos.");
             setLoading(false);
             await signOut(auth);
@@ -100,23 +90,14 @@ export default function LogInPage() {
     const loginWithGoogle = async () => {
         setLoading(true);
         setError(null);
+        setErrorCode(null);
         setSuccessMessage(null);
-
-        console.log("🔵 Intentando Login con Google..."); // DIAGNÓSTICO
 
         try {
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            console.log("🟢 Usuario Google autenticado:", user.email); // DIAGNÓSTICO
-
-            console.log("🟡 Generando Token ID...");
             const idToken = await user.getIdToken(true);
-            
-            if (!idToken) throw new Error("Token Google vacío");
-            
-            console.log("🟢 TOKEN OBTENIDO:", idToken.substring(0, 20) + "...");
-
             await createSessionCookie(idToken);
         } catch (error: any) {
             console.error("Error Google:", error.message);
@@ -162,13 +143,22 @@ export default function LogInPage() {
 
             {successMessage && (
                 <div className="p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700 border border-green-200 animate-pulse" role="alert">
-                    <p>✅ {successMessage}</p>
+                    <p className="flex items-center justify-center gap-2">
+                        ✅ {successMessage}
+                    </p>
                 </div>
             )}
 
             {error && (
                 <div className="p-3 rounded-lg text-sm font-medium bg-red-100 text-red-700 border border-red-200" role="alert">
-                    <p>❌ {error} {errorCode && <span>(Código: {errorCode})</span>}</p>
+                    <p className="flex flex-col items-center justify-center gap-1">
+                        <span>❌ {error}</span> 
+                        {errorCode && (
+                            <span className="bg-red-200 px-2 py-0.5 rounded text-xs font-bold mt-1">
+                                Código HTTP: {errorCode}
+                            </span>
+                        )}
+                    </p>
                 </div>
             )}
 
@@ -177,7 +167,7 @@ export default function LogInPage() {
               disabled={loading}
               className="w-full bg-yellow-400 text-white font-bold py-3 rounded-full hover:bg-yellow-500 transition duration-150 flex items-center justify-center disabled:bg-yellow-200 disabled:cursor-not-allowed"
             >
-              {loading ? "Verificando..." : "Entrar"}
+              {loading ? "Procesando..." : "Entrar"}
             </button>
           </form>
 
