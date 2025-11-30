@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-// Asegúrate de que la ruta de importación sea la correcta para tu estructura
 import Header from "../../Components/Header"; 
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
