@@ -124,7 +124,7 @@ export default function Header() {
                         <li><a href="#perros" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Perros</a></li>
                         <li><a href="#gatos" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Gatos</a></li>
                         <li><a href="#enfermedades" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Enfermedades</a></li>
-                        
+                    </ul>
                         {/* --- Enlace al Foro --- */}
                         <li>
                             <Link href="/dashboard/foro" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">
