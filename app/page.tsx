@@ -5,7 +5,7 @@ import Link from "next/link";
 import Header from "../Components/Header";
 
 export default function Home() {
-  
+
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <>
@@ -31,8 +31,8 @@ export default function Home() {
             Encuentra información, consejos y todo lo que necesitas para cuidar a tu mejor amigo
           </p>
           <div className="hero-botones">
-            <a href="#guias" className="hero-boton primary">Explorar guías</a>
-            <a href="#adopciones" className="hero-boton secondary">Ver adopciones</a>
+            <Link href="/enfermedades" className="hero-boton primary">Explorar guías</Link>
+            <Link href="/dashboard/adopciones" className="hero-boton secondary">Ver adopciones</Link>
           </div>
         </div>
       </section>
@@ -76,12 +76,45 @@ export default function Home() {
         </section>
 
         {/* Tailwind*/}
-        <section className="section center rounded-2xl shadow-lg 
-                    bg-gradient-to-r from-yellow-300 to-orange-500">
-          <h2 className="text-2xl font-semibold mb-2">🐶 ¡Hay que mejorar el mundo de las mascotas!🐱 </h2>
-          <a href="#adopta" className="btn bg-orange-600 text-white shadow-xl hover:bg-orange-700 text-lg py-3 px-6">
-            Adopta ahora
-          </a>
+        <section className="
+  relative p-10 rounded-3xl overflow-hidden
+  bg-gradient-to-br from-orange-500 via-yellow-400 to-orange-600
+  shadow-xl border border-white/20
+  flex flex-col items-center text-center
+  animate-fade-in
+">
+
+          {/* Fondo decorativo con blur */}
+          <div className="absolute inset-0 backdrop-blur-sm bg-white/10"></div>
+
+          {/* Contenido */}
+          <div className="relative z-10 flex flex-col items-center">
+
+            <h2 className="text-3xl font-extrabold text-white drop-shadow-md mb-4">
+              🐶 Cambiemos el mundo una mascota a la vez 🐱
+            </h2>
+
+            <p className="text-white/90 text-lg max-w-lg mb-6">
+              Dale una nueva oportunidad a un amigo peludo. Tu adopción puede transformar vidas.
+            </p>
+
+            <Link
+              href="/dashboard/adopciones"
+              className="
+        bg-white text-orange-700 font-semibold 
+        px-8 py-3 rounded-full shadow-lg
+        hover:scale-105 hover:shadow-xl
+        transition-all duration-300 ease-out
+      "
+            >
+              Adopta ahora
+            </Link>
+          </div>
+
+          {/* Decoraciones flotantes */}
+          <div className="absolute -top-5 -right-5 w-32 h-32 bg-white/20 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-200/20 rounded-full blur-xl"></div>
+
         </section>
         <section className="section" aria-labelledby="testimonials-title">
           <div className="container">
