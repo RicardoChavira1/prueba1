@@ -3,9 +3,7 @@ import { useState, useEffect } from "react";
 import Header from "@/Components/Header"; 
 import { auth } from "../../../lib/firebase-client"; 
 import { onAuthStateChanged, User } from "firebase/auth";
-// --- CAMBIO: Importamos Link para la navegación ---
 import Link from "next/link";
-// --- CAMBIO: Importamos toggleCampanaLike ---
 import { addCampana, listenToCampanas, toggleAsistencia, toggleCampanaLike, Campana } from "../../../lib/firestore-service";
 
 export default function AdopcionesPage() {
