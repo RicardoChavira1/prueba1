@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ENFERMEDADES_WIKI, Enfermedad } from '@/lib/enfermedades';
+import Header from "@/Components/Header";
 
 export default function EnfermedadesPage() {
     const enfermedadesPerros = ENFERMEDADES_WIKI.filter(e => e.especie === 'Perros');
@@ -7,7 +8,7 @@ export default function EnfermedadesPage() {
 
     return (
         <main className="min-h-screen bg-gray-50">
-
+            <Header />
             {/* Encabezado */}
             <section className="bg-gradient-to-r from-orange-400 to-yellow-400 py-12 shadow-md rounded-b-3xl mb-12">
                 <div className="container mx-auto text-center">
