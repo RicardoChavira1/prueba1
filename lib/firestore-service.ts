@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase-client";
 
+// --- TIPOS ---
 export interface Comment {
     id: string;
     autorId: string;
@@ -35,7 +36,24 @@ export interface Post {
     comentarios: number;
 }
 
-// --- POSTS ---
+export interface Campana {
+    id: string;
+    organizadorId: string;
+    organizador: string; 
+    titulo: string;
+    descripcion: string;
+    fechaEvento: string; 
+    horaEvento: string;
+    direccion: string;
+    asistentes: string[]; 
+    likes: string[];
+    comentarios: number;
+    fechaCreacion: Timestamp;
+}
+
+// ==========================================
+//                 FORO (POSTS)
+// ==========================================
 
 export const addPost = async (texto: string, user: any) => {
     try {
@@ -131,5 +149,109 @@ export const addComment = async (postId: string, texto: string, user: any) => {
     } catch (e) {
         console.error("Error al comentar: ", e);
         return false;
+    }
+};
+// ==========================================
+//           CAMPAÑAS DE ADOPCIÓN (NUEVO)
+// ==========================================
+
+// 1. Crear Campaña
+export const addCampana = async (datos: any, user: any) => {
+    try {
+        await addDoc(collection(db, "campanas"), {
+            organizadorId: user.uid,
+            organizador: user.displayName || user.email.split('@')[0],
+            titulo: datos.titulo,
+            descripcion: datos.descripcion,
+            fechaEvento: datos.fecha,
+            horaEvento: datos.hora,
+            direccion: datos.direccion,
+            asistentes: [],
+            likes: [],
+            comentarios: 0,
+            fechaCreacion: serverTimestamp(),
+        });
+        return true;
+    } catch (e) {
+        console.error("Error al crear campaña: ", e);
+        return false;
+    }
+};
+
+// 2. Escuchar Campañas
+export const listenToCampanas = (callback: (campanas: Campana[]) => void) => {
+    const q = query(collection(db, "campanas"), orderBy("fechaCreacion", "desc"));
+    return onSnapshot(q, (snapshot) => {
+        const campanas = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+            asistentes: doc.data().asistentes || [], // Asegurar array
+            likes: doc.data().likes || []
+        })) as Campana[];
+        callback(campanas);
+    });
+};
+
+// 3. Confirmar/Cancelar Asistencia
+export const toggleAsistencia = async (campanaId: string, userId: string, currentAsistentes: string[]) => {
+    const docRef = doc(db, "campanas", campanaId);
+    try {
+        if (currentAsistentes.includes(userId)) {
+            // Ya asiste -> Quitamos (Cancelar asistencia)
+            await updateDoc(docRef, { asistentes: arrayRemove(userId) });
+        } else {
+            // No asiste -> Agregamos (Confirmar asistencia)
+            await updateDoc(docRef, { asistentes: arrayUnion(userId) });
+        }
+    } catch (error) {
+        console.error("Error asistencia:", error);
+    }
+};
+export const getCampanaById = async (campanaId: string) => {
+    const docRef = doc(db, "campanas", campanaId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as Campana;
+    }
+    return null;
+};
+
+export const addCampanaComment = async (campanaId: string, texto: string, user: any) => {
+    try {
+        // Guardamos en la subcolección de LA CAMPAÑA
+        await addDoc(collection(db, "campanas", campanaId, "comentarios"), {
+            autorId: user.uid,
+            autorNombre: user.displayName || user.email.split('@')[0],
+            autorFoto: user.photoURL || null,
+            contenido: texto,
+            fecha: serverTimestamp(),
+        });
+        // Incrementamos contador
+        const docRef = doc(db, "campanas", campanaId);
+        await updateDoc(docRef, { comentarios: increment(1) });
+        return true;
+    } catch (e) {
+        console.error("Error al comentar campaña: ", e);
+        return false;
+    }
+};
+
+export const listenToCampanaComments = (campanaId: string, callback: (comments: Comment[]) => void) => {
+    const q = query(collection(db, "campanas", campanaId, "comentarios"), orderBy("fecha", "asc"));
+    return onSnapshot(q, (snapshot) => {
+        const comments = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Comment[];
+        callback(comments);
+    });
+};
+export const toggleCampanaLike = async (campanaId: string, userId: string, currentLikes: string[]) => {
+    const docRef = doc(db, "campanas", campanaId);
+    try {
+        if (currentLikes.includes(userId)) {
+            await updateDoc(docRef, { likes: arrayRemove(userId) });
+        } else {
+            await updateDoc(docRef, { likes: arrayUnion(userId) });
+        }
+    } catch (error) {
+        console.error("Error like campaña:", error);
     }
 };

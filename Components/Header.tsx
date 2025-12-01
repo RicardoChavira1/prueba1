@@ -120,7 +120,7 @@ export default function Header() {
                         <li><Link href="/gatos" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Gatos</Link></li>
                         <li><Link href="/enfermedades" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Enfermedades</Link></li>
                         <li><Link href="/dashboard/foro" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Foro</Link></li>
-                        <li><Link href="/adopciones" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Adopciones</Link></li>
+                        <li><Link href="/dashboard/adopciones" className="font-extrabold text-lg text-gray-800 hover:text-orange-500 transition duration-150">Adopciones</Link></li>
                     </ul>
 
                     <div className="hidden md:flex items-center gap-3">
@@ -145,7 +145,7 @@ export default function Header() {
                         <li><Link href="/gatos" className="font-bold text-lg text-gray-800" onClick={() => setMenuOpen(false)}>Gatos</Link></li>
                         <li><Link href="/enfermedades" className="font-bold text-lg text-gray-800" onClick={() => setMenuOpen(false)}>Enfermedades</Link></li>
                         <li><Link href="/dashboard/foro" className="font-bold text-lg text-gray-800" onClick={() => setMenuOpen(false)}>Foro</Link></li>
-                        <li><Link href="/adopciones" className="font-bold text-lg text-gray-800" onClick={() => setMenuOpen(false)}>Adopciones</Link></li>
+                        <li><Link href="/dashboard/adopciones" className="font-bold text-lg text-gray-800" onClick={() => setMenuOpen(false)}>Adopciones</Link></li>
 
                         <li className="flex flex-col items-center gap-2 mt-2 w-full px-4">
                             {renderMobileAuthLinks()}
