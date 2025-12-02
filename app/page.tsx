@@ -194,7 +194,14 @@ export default function Home() {
         <div className="flex justify-center gap-6 mb-2">
           <a href="/contacto" className="hover:underline">Términos</a>
           <a href="/privacidad" className="hover:underline">Privacidad</a>
-          <a href="/privacidad" className="hover:underline">Redes Sociales</a>
+          <a 
+            href="https://www.youtube.com/@rosquetobey_1" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:underline border-gray-300 text-gray-700 bg-gray-50 font-semibold"
+          >
+            Redes Sociales (YouTube)
+          </a>
         </div>
         <p>© 2025 Wikipets. Todos los derechos reservados.</p>
       </footer>
