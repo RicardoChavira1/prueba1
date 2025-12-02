@@ -111,7 +111,15 @@ export default function Header() {
             >
                 <div className="container mx-auto flex items-center justify-between">
                     <a className="brand flex items-center gap-2" href="/">
-                        <Image src="/logo.png" alt="Logo Wikipets" width={70} height={40} />
+                        <div className="relative w-28 h-12 md:w-48 md:h-16">
+                            <Image 
+                                src="/logo.png" 
+                                alt="Logo Wikipets" 
+                                fill
+                                className="object-contain object-left"
+                                priority
+                            />
+                        </div>
                     </a>
                     
                   
