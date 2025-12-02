@@ -31,7 +31,7 @@ export default function Home() {
             Encuentra información, consejos y todo lo que necesitas para cuidar a tu mejor amigo
           </p>
           <div className="hero-botones">
-            <Link href="/enfermedades" className="hero-boton primary">Explorar guías</Link>
+            <Link href="/perros" className="hero-boton primary">Explorar guías</Link>
             <Link href="/dashboard/adopciones" className="hero-boton secondary">Ver adopciones</Link>
           </div>
         </div>
