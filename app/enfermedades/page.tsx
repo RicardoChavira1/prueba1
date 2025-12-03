@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ENFERMEDADES_WIKI, Enfermedad } from '@/lib/enfermedades';
-import Header from "../Components/Header";
+import Header from "@/Components/Header";
 
 export default function EnfermedadesPage() {
     const enfermedadesPerros = ENFERMEDADES_WIKI.filter(e => e.especie === 'Perros');
