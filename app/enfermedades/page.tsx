@@ -3,106 +3,101 @@ import { ENFERMEDADES_WIKI, Enfermedad } from '@/lib/enfermedades';
 import Header from "@/Components/Header";
 
 export default function EnfermedadesPage() {
-  const enfermedadesPerros = ENFERMEDADES_WIKI.filter(e => e.especie === 'Perros');
-  const enfermedadesGatos = ENFERMEDADES_WIKI.filter(e => e.especie === 'Gatos');
+    const enfermedadesPerros = ENFERMEDADES_WIKI.filter(e => e.especie === 'Perros');
+    const enfermedadesGatos = ENFERMEDADES_WIKI.filter(e => e.especie === 'Gatos');
 
-  return (
-    <main className="min-h-screen bg-yellow-50">
-      <Header />
+    return (
+        <main className="min-h-screen bg-gray-50">
+            <Header />
 
-      {/* ENCABEZADO */}
-      <section className="bg-gradient-to-r from-orange-500 to-yellow-400 py-16 shadow-lg rounded-b-[3rem] mb-16">
-        <div className="container mx-auto text-center px-6">
-          <h1 className="text-5xl md:text-6xl font-black text-white drop-shadow-xl">
-            Enfermedades Comunes en Mascotas 🐾
-          </h1>
-          <p className="mt-5 text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-            Identifica síntomas, aprende y cuida mejor a tus peluditos.
-          </p>
-        </div>
-      </section>
+            {/* Encabezado */}
+            <section className="bg-gradient-to-r from-orange-400 to-yellow-400 py-12 shadow-md rounded-b-3xl mb-12">
+                <div className="container mx-auto text-center">
+                    <h1 className="text-5xl font-extrabold text-white drop-shadow-lg">
+                        Enfermedades Comunes en Mascotas 🐾
+                    </h1>
+                    <p className="mt-4 text-lg text-white/90">
+                        Aprende a identificar síntomas y cuidar mejor a tus peluditos.
+                    </p>
+                </div>
+            </section>
 
-      {/* SECCIÓN PRINCIPAL */}
-      <section className="container mx-auto px-6 mb-24">
-        <h2 className="text-4xl font-extrabold text-center text-orange-600 mb-14">
-          Consulta por Especie
-        </h2>
+            {/* Sección principal */}
+            <section className="container mx-auto px-6 mb-20">
+                <h2 className="text-4xl font-bold text-center text-orange-600 mb-12">
+                    Consulta por Especie
+                </h2>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="flex flex-col md:flex-row gap-12">
 
-          {/* PERROS */}
-          <div className="bg-white p-10 rounded-3xl shadow-xl border border-orange-100">
-            <h3 className="text-3xl font-extrabold mb-10 text-center text-blue-700">
-              Enfermedades de Perros 🐶
-            </h3>
+                    {/* Columna Perros */}
+                    <div className="w-full md:w-1/2 bg-white p-10 rounded-2xl shadow-xl border border-gray-200">
+                        <h3 className="text-3xl font-bold mb-8 text-center text-gray-700">
+                            Enfermedades de Perros 🐶
+                        </h3>
 
-            <ul className="space-y-6">
-              {enfermedadesPerros.map((enfermedad: Enfermedad) => (
-                <li
-                  key={enfermedad.id}
-                  className="bg-blue-50 p-6 rounded-2xl border-2 border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all"
-                >
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <span className="text-xl font-bold text-gray-800">
-                      {enfermedad.nombre}
-                    </span>
+                        <ul className="space-y-5">
+                            {enfermedadesPerros.map((enfermedad: Enfermedad) => (
+                                <li
+                                    key={enfermedad.id}
+                                    className="flex flex-col md:flex-row md:items-center md:justify-between bg-blue-50 p-5 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition"
+                                >
+                                    <span className="text-xl font-semibold text-gray-800 mb-3 md:mb-0">
+                                        {enfermedad.nombre}
+                                    </span>
 
-                    <Link
-                      href={`/enfermedades/${enfermedad.id}`}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-7 rounded-full shadow transition"
-                    >
-                      Ver Detalles
-                    </Link>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                                    <Link
+                                        href={`/enfermedades/${enfermedad.id}`}
+                                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full transition w-full md:w-auto text-center"
+                                    >
+                                        Ver Detalles
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-          {/* GATOS */}
-          <div className="bg-white p-10 rounded-3xl shadow-xl border border-orange-100">
-            <h3 className="text-3xl font-extrabold mb-10 text-center text-green-700">
-              Enfermedades de Gatos 🐱
-            </h3>
+                    {/* Columna Gatos */}
+                    <div className="w-full md:w-1/2 bg-white p-10 rounded-2xl shadow-xl border border-gray-200">
+                        <h3 className="text-3xl font-bold mb-8 text-center text-gray-700">
+                            Enfermedades de Gatos 🐱
+                        </h3>
 
-            <ul className="space-y-6">
-              {enfermedadesGatos.map((enfermedad: Enfermedad) => (
-                <li
-                  key={enfermedad.id}
-                  className="bg-green-50 p-6 rounded-2xl border-2 border-green-100 hover:border-green-300 hover:shadow-lg transition-all"
-                >
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <span className="text-xl font-bold text-gray-800">
-                      {enfermedad.nombre}
-                    </span>
+                        <ul className="space-y-5">
+                            {enfermedadesGatos.map((enfermedad: Enfermedad) => (
+                                <li
+                                    key={enfermedad.id}
+                                    className="flex flex-col md:flex-row md:items-center md:justify-between bg-green-50 p-5 rounded-xl shadow-sm border border-green-100 hover:shadow-md transition"
+                                >
+                                    <span className="text-xl font-semibold text-gray-800 mb-3 md:mb-0">
+                                        {enfermedad.nombre}
+                                    </span>
 
-                    <Link
-                      href={`/enfermedades/${enfermedad.id}`}
-                      className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-7 rounded-full shadow transition"
-                    >
-                      Ver Detalles
-                    </Link>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                                    <Link
+                                        href={`/enfermedades/${enfermedad.id}`}
+                                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full transition w-full md:w-auto text-center"
+                                    >
+                                        Ver Detalles
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-        </div>
-      </section>
+                </div>
+            </section>
 
-      {/* PIE ELEGANTE */}
-      <section className="bg-white py-20 mt-12 shadow-inner rounded-t-3xl border-t border-orange-100">
-        <h2 className="text-4xl font-black text-center text-gray-800 mb-5">
-          Cuidar a tus mascotas es cuidarte a ti 💛
-        </h2>
-        <p className="text-center text-gray-600 max-w-xl mx-auto text-lg leading-relaxed">
-          Consulta esta guía regularmente para prevenir enfermedades y mantener a tus amigos 
-          peludos felices, fuertes y saludables.
-        </p>
-      </section>
-       {/* --- FOOTER --- */}
+            {/* Pie elegante */}
+            <section className="bg-white py-16 mt-10 shadow-inner">
+                <h2 className="text-4xl font-bold text-center text-gray-800 mb-6">
+                    Cuidar a tus mascotas es cuidarte a ti 💛
+                </h2>
+                <p className="text-center text-gray-600 max-w-2xl mx-auto">
+                    Consulta esta información regularmente para prevenir enfermedades
+                    y mantener a tus amigos peludos felices y saludables.
+                </p>
+            </section>
+            {/* --- FOOTER --- */}
             <footer className="w-full border-t border-gray-200 py-6 text-center text-sm text-gray-700 bg-gray-50">
                 <div className="flex justify-center gap-6 mb-2">
                     <Link href="/contacto" className="hover:underline">Términos</Link>
@@ -118,7 +113,8 @@ export default function EnfermedadesPage() {
                 </div>
                 <p>© 2025 Wikipets. Todos los derechos reservados.</p>
             </footer>
-    </main>
-    
-  );
+
+        </main>
+        
+    );
 }
