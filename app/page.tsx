@@ -203,7 +203,7 @@ export default function Home() {
             Redes Sociales (YouTube)
           </a>
         </div>
-        <p>© 2025 Wikipets. Todos los derechos reservados.</p>
+        <p>© 2025 Wikipets. Todos los derechos reservados Petryx.</p>
       </footer>
     </>
   );
